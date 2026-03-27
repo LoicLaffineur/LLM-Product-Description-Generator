@@ -4,3 +4,5 @@ data/outputs/partial_results.jsonl
 models/final_adapter             
 .DS_Store
 GenAI_project_docs.txt
+assets/Example_3_video.mov
+assets/Example_3_video2.mov
