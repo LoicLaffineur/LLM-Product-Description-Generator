@@ -127,6 +127,14 @@ The Streamlit UI notes that the `technical` style reaches the best composite sco
 - `data/outputs/examples.json`
 - `data/outputs/rag_results.jsonl` (for RAG runs)
 
+### 📈 Evaluation Plots
+
+![Barplot comparison](assets/Eval.png)
+![Boxplot comparison](assets/Eval_2.png)
+![Composite score by style](assets/eval_scores.png) 
+![RAG results](assets/RAG.png)
+![LoRA results](assets/Lora.png)
+
 ## 🤖 Streamlit Application
 
 The interactive UI is implemented in `app/app.py`.
@@ -138,6 +146,10 @@ python3 -m streamlit run app/app.py
 ```
 
 `app/app.py` calls a FastAPI backend through `API_URL` (currently configured for a ngrok URL).
+
+![Home page](assets/Home_page.png)
+![First example](assets/Example_1.png)
+![Animated example](assets/Example_3_video2.mov)
 
 ## 📂 Repository Structure
 
