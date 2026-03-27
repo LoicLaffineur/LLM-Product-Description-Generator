@@ -131,7 +131,7 @@ The Streamlit UI notes that the `technical` style reaches the best composite sco
 
 ![Barplot comparison](assets/Eval.png)
 ![Boxplot comparison](assets/Eval_2.png)
-![Composite score by style](assets/eval_scores.png) 
+![Composite score by style](assets/Composite.png) 
 ![RAG results](assets/RAG.png)
 ![LoRA results](assets/Lora.png)
 
@@ -149,15 +149,15 @@ python3 -m streamlit run app/app.py
 
 ![Home page](assets/Home_page.png)
 ![First example](assets/Example_1.png)
-![Animated example](assets/Example_3_video2.mov)
+![Animated example](assets/Example_3_video2.gif)
 
 ## 📂 Repository Structure
 
-├── `notebooks/` (pipeline: data → prompt → evaluation → RAG → LoRA → API)
-├── `app/` (Streamlit UI)
-├── `data/` (processed dataset + evaluation/RAG outputs)
-├── `models/` (PEFT adapter + templates/configs)
-└── `assets/` (project assets and screenshots)
+├── `notebooks/` (pipeline: data → prompt → evaluation → RAG → LoRA → API)  
+├── `app/` (Streamlit UI)  
+├── `data/` (processed dataset + evaluation/RAG outputs)  
+├── `models/` (PEFT adapter + templates/configs)  
+└── `assets/` (project assets and screenshots)  
 
 ## ✅ How to Reproduce the Workflow
 
