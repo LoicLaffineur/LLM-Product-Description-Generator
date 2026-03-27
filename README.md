@@ -149,7 +149,9 @@ python3 -m streamlit run app/app.py
 
 ![Home page](assets/Home_page.png)
 ![First example](assets/Example_1.png)
-![Animated example](assets/Example_3_video2.gif)
+<p align="left">
+  <img src="assets/Example_3_video2.gif" width="600">
+</p>
 
 ## 📂 Repository Structure
 
