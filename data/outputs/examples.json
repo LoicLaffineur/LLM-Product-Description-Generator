@@ -1,0 +1,23 @@
+{
+    "title": "Apple MacBook Air M2 13-inch Laptop with Retina Display",
+    "brand": "Apple",
+    "category": "Laptops",
+    "price": "1199.00",
+    "style": "technical"
+}
+
+{
+    "title": "Sony WH-1000XM5 Wireless Noise Cancelling Headphones",
+    "brand": "Sony",
+    "category": "Headphones",
+    "price": "349.99",
+    "style": "marketing"
+}
+
+{
+    "title": "Rolex Submariner Date Stainless Steel Watch",
+    "brand": "Rolex",
+    "category": "Luxury Watches",
+    "price": "10250.00",
+    "style": "short"
+}

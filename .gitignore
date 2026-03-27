@@ -1,0 +1,6 @@
+.venv/
+data/raw/                   
+data/outputs/partial_results.jsonl  
+models/final_adapter             
+.DS_Store
+GenAI_project_docs.txt
