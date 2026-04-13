@@ -1,143 +1,82 @@
-# 🤖 Generate Product Descriptions with Fine-Tuned LLMs
+# Generate Product Descriptions with Fine-Tuned LLMs
 
-## 🎯 Business Problem
+## Business Problem
 
 E-commerce catalogs grow quickly, but high-quality product descriptions remain expensive and time-consuming to write manually.
 
-How can we automatically generate accurate, engaging, and scalable product descriptions using Large Language Models—and measure whether fine-tuning actually improves over prompt engineering alone?
+How can we automatically generate accurate, engaging, and scalable product descriptions using Large Language Models — and measure whether fine-tuning actually improves over prompt engineering alone?
 
-## 💡 Proposed Solution
+## Proposed Solution
 
-This repository builds a full end-to-end pipeline to generate product descriptions from structured product metadata (e.g., `title`, `brand`, `category`, `price`) and compare:
+This repository builds a full end-to-end pipeline to generate product descriptions from structured product metadata (`title`, `brand`, `category`, `price`) and compare:
 
-- a base LLM generation using prompt engineering,
-- a fine-tuned variant using QLoRA (PEFT) with Mistral7B,
-- an optional RAG-enhanced generation step to inject retrieved context.
+- a base LLM using prompt engineering,
+- a RAG-enhanced variant (FAISS retrieval + context injection),
+- a fine-tuned variant using QLoRA (PEFT) on Mistral 7B.
 
 The workflow is organized as 6 notebooks (data preparation → prompt generation → evaluation → RAG → fine-tuning → deployment) plus a Streamlit UI.
 
-### Key steps:
+## Results
 
-- Data loading & cleaning (create a curated dataset)
-- Prompt engineering with multiple styles (short / marketing / technical)
-- Evaluation with lexical + semantic metrics + composite scoring
-- Optional RAG pipeline (FAISS retrieval + context injection)
-- Fine-tuning with QLoRA to specialize the model on the domain
-- Deployment via FastAPI + Streamlit for real-time generation
+| Approach | Composite Score | vs. Baseline |
+|----------|----------------|--------------|
+| Base (prompt engineering) | — | — |
+| + RAG (FAISS retrieval) | ↑ +3.2% | retrieval context injection |
+| + LoRA fine-tuning (QLoRA) | ↑ +1.4% | domain adaptation |
 
-## 🧠 Project Pipeline (End-to-End View)
+Best style: `technical` — composite score ~0.435 (BLEU + ROUGE-L + cosine similarity).
 
-`Raw data → Cleaning → Prompt Engineering → Base LLM`
+## Pipeline
 
-`                              ↓`
+```
+Raw data → Cleaning → Prompt Engineering → Base LLM
+                              ↓
+                    Fine-Tuning (QLoRA)
+                              ↓
+              Evaluation (BLEU / ROUGE-L / Cosine)
+                              ↓
+          (Optional) RAG: retrieval + context injection
+                              ↓
+              FastAPI API → Streamlit Application
+```
 
-`                         Fine-Tuning (QLoRA)`
+## Notebook Summary
 
-`                              ↓`
+| Notebook | Description |
+|----------|-------------|
+| `01_Load_&_Clean.ipynb` | Load Amazon Electronics dataset, filter, deduplicate → `clean_products_800.csv` |
+| `02_Prompt_Engineering.ipynb` | Multi-style prompt templates: `short` / `marketing` / `technical` |
+| `03_Evaluation.ipynb` | BLEU, ROUGE-L, cosine similarity, composite score → `scores_evaluation.csv` |
+| `04_RAG.ipynb` | FAISS index, top-k retrieval, context injection → `rag_results.jsonl` |
+| `05_LoRA.ipynb` | QLoRA fine-tuning on Mistral 7B Instruct (targets: q/k/v/o/gate/up/down proj) |
+| `06_API.ipynb` | FastAPI endpoints (`/generate`, `/health`) + ngrok public URL |
 
-`                 Evaluation (lexical + semantic)`
+## Technologies
 
-`                              ↓`
+Python · Hugging Face Transformers · PEFT (QLoRA) · Mistral 7B Instruct · FAISS · sentence-transformers · FastAPI · Streamlit · Pandas · NumPy
 
-`         (Optional) RAG: retrieval + context injection`
+## Business Impact
 
-`                              ↓`
+- Scale content creation across large catalogs (hours → seconds)
+- Consistent tone and quality via domain adaptation
+- Controllable output style (short / marketing / technical)
+- Reproducible evaluation loop — BLEU, ROUGE-L, cosine similarity
 
-`                 FastAPI API → Streamlit Application`
-
-## 📄 Notebook Summary (01 to 06)
-
-### `01_Load_&_Clean.ipynb` — Data Loading & Cleaning
-
-- Loads the Amazon Electronics dataset
-- Explores structure, filters and deduplicates
-- Produces a clean sample for downstream steps
-- Key output: `data/processed/clean_products_800.csv`
-
-### `02_Prompt_Engineering.ipynb` — Prompt Engineering
-
-- Generates product descriptions using prompt templates
-- Tests multiple styles:
-  - `short`
-  - `marketing`
-  - `technical`
-
-### `03_Evaluation.ipynb` — Product Description Evaluation
-
-- Evaluates generated descriptions against reference Amazon descriptions
-- Metrics observed in the repo:
-  - BLEU
-  - ROUGE-L
-  - semantic similarity (cosine using sentence embeddings)
-  - composite score
-- Key output: `data/outputs/scores_evaluation.csv`
-
-### `04_RAG.ipynb` — RAG-Enhanced Generation
-
-- Builds a FAISS index from sentence embeddings (retrieval)
-- Retrieves top-k similar products
-- Injects retrieved context into the RAG prompt before generation
-- Key outputs:
-  - `data/outputs/rag_results.jsonl`
-  - `data/outputs/partial_results.jsonl`
-
-### `05_LoRA.ipynb` — LoRA Fine-Tuning (QLoRA)
-
-- Fine-tunes a Mistral Instruct model using QLoRA/PEFT
-- Adapter targets observed in the adapter config:
-  - `gate_proj`, `o_proj`, `k_proj`, `v_proj`, `q_proj`, `up_proj`, `down_proj`
-
-### `06_API.ipynb` — Deployment: FastAPI (+ ngrok)
-
-- Exposes the generation pipeline through REST endpoints
-- Endpoints observed:
-  - `GET /`
-  - `GET /health`
-  - `POST /generate` (returns `base` and `finetuned`)
-- The notebook can also open a public URL via ngrok
-
-## 🛠️ Technologies
-
-Python • Hugging Face Transformers • PEFT (QLoRA) • Mistral 7B Instruct • FastAPI • Streamlit • Pandas • NumPy • FAISS • sentence-transformers
-
-## 🚀 Business Impact
-
-- Scale content creation across large catalogs (minutes/hours → seconds)
-- More consistent tone/quality via domain adaptation (fine-tuning)
-- Better control of output style (short/marketing/technical)
-- Faster iteration thanks to an evaluation loop (metrics + qualitative examples)
-
-## 📊 Evaluation Results
-
-### Model evaluation setup
-
-The repository evaluates generated descriptions using:
-
-- lexical overlap (BLEU, ROUGE-L),
-- semantic similarity (cosine similarity over embeddings),
-- a composite score aggregating the above.
-
-### Best-performing generation style (observed)
-
-The Streamlit UI notes that the `technical` style reaches the best composite score (approx. `0.435`) in the evaluation notebook.
-
-### Where to find the raw scores & samples
-
-- `data/outputs/scores_evaluation.csv`
-- `data/outputs/examples.json`
-- `data/outputs/rag_results.jsonl` (for RAG runs)
-
-### 📈 Evaluation Plots
+## Evaluation Plots
 
 ![Barplot comparison](assets/Eval.png)
 ![Boxplot comparison](assets/Eval_2.png)
-![Composite score by style](assets/Composite.png) 
+![Composite score by style](assets/Composite.png)
 ![RAG results](assets/RAG.png)
 ![LoRA results](assets/Lora.png)
 
-## 🤖 Streamlit Application
+## Streamlit Application
 
-The interactive UI is implemented in `app/app.py`.
+![Home page](assets/Home_page.png)
+![Example 1](assets/Example_1.png)
+<p align="left">
+  <img src="assets/Example_3_video2.gif" width="600">
+</p>
 
 Run locally:
 
@@ -145,28 +84,24 @@ Run locally:
 python3 -m streamlit run app/app.py
 ```
 
-`app/app.py` calls a FastAPI backend through `API_URL` (currently configured for a ngrok URL).
+> The Streamlit app calls a FastAPI backend via `API_URL` (configured for a ngrok URL in `app/app.py`).
 
-![Home page](assets/Home_page.png)
-![First example](assets/Example_1.png)
-<p align="left">
-  <img src="assets/Example_3_video2.gif" width="600">
-</p>
+## Repository Structure
 
-## 📂 Repository Structure
+```
+├── notebooks/   # 01 to 06 — full pipeline
+├── app/         # Streamlit UI
+├── data/        # processed dataset + evaluation outputs
+├── models/      # PEFT adapter + configs
+└── assets/      # screenshots and plots
+```
 
-├── `notebooks/` (pipeline: data → prompt → evaluation → RAG → LoRA → API)  
-├── `app/` (Streamlit UI)  
-├── `data/` (processed dataset + evaluation/RAG outputs)  
-├── `models/` (PEFT adapter + templates/configs)  
-└── `assets/` (project assets and screenshots)  
+## How to Reproduce
 
-## ✅ How to Reproduce the Workflow
-
-1. Run `notebooks/01_Load_&_Clean.ipynb`
-2. Run `notebooks/02_Prompt_Engineering.ipynb`
-3. Run `notebooks/03_Evaluation.ipynb`
-4. (Optional) Run `notebooks/04_RAG.ipynb`
-5. Run `notebooks/05_LoRA.ipynb` and save the adapter to `models/final_adapter/`
-6. Run `notebooks/06_API.ipynb` to start FastAPI and obtain the backend URL
-7. Update `API_URL` in `app/app.py` and run the Streamlit UI 
+1. `01_Load_&_Clean.ipynb`
+2. `02_Prompt_Engineering.ipynb`
+3. `03_Evaluation.ipynb`
+4. *(Optional)* `04_RAG.ipynb`
+5. `05_LoRA.ipynb` — save adapter to `models/final_adapter/`
+6. `06_API.ipynb` — start FastAPI, get backend URL
+7. Update `API_URL` in `app/app.py` and run Streamlit
