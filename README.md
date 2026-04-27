@@ -1,77 +1,66 @@
-# Generate Product Descriptions with Fine-Tuned LLMs
+# Automated Product Description Generation (LLM Pipeline)
 
-## Business Problem
+Transform product metadata into consistent, high‑quality descriptions at scale.
 
-E‑commerce catalogs grow quickly, but high‑quality product descriptions remain expensive and time‑consuming to write manually.
+## The Problem
 
-How can we automate the generation of accurate, engaging, and scalable product descriptions using Large Language Models — and answer a simple question:  
-does fine‑tuning actually improve over prompt engineering alone?
+E‑commerce and retail companies manage large catalogs but struggle to:
 
-## Proposed Solution
+- Produce high‑quality product descriptions fast enough  
+- Maintain consistent tone and style across products  
+- Scale content creation without exploding costs  
 
-This repository builds a full end‑to‑end pipeline to generate product descriptions from structured product metadata (`title`, `brand`, `category`, `price`) and compare:
+Manual writing is slow, expensive, and hard to maintain as the catalog grows.
 
-- a base LLM using prompt engineering,
-- a RAG‑enhanced variant (FAISS retrieval + context injection),
-- a fine‑tuned variant using QLoRA (PEFT) on Mistral‑7B.
+## The Approach
 
-The workflow is organized as 6 notebooks (data preparation → prompt generation → evaluation → RAG → fine‑tuning → deployment), plus a Streamlit UI for exploration.
+This project builds an end‑to‑end pipeline to generate product descriptions from structured metadata (`title`, `brand`, `category`, `price`).
+
+Three approaches are compared:
+
+- Base LLM with prompt engineering  
+- RAG‑enhanced LLM (FAISS retrieval + context injection)  
+- QLoRA‑fine‑tuned LLM on Mistral‑7B  
+
+The goal: automate descriptions while keeping control over style and quality.
 
 ## Results
 
-| Approach | Composite Score | vs. Baseline |
-|----------|----------------|--------------|
-| Base (prompt engineering) | — | — |
-| + RAG (FAISS retrieval) | ↑ +3.2% | retrieval context injection |
-| + LoRA fine-tuning (QLoRA) | ↑ +1.4% | domain adaptation |
+- Base LLM: good baseline quality  
+- RAG‑enhanced: +3.2% in quality (context‑based accuracy)  
+- Fine‑tuned model: +1.4% in quality and more stable style  
 
-Best style: **`technical`** — composite score ~0.435 (BLEU + ROUGE-L + cosine similarity).
+Best style: **technical** (~0.435 composite score)  
+→ mixes BLEU, ROUGE‑L, and semantic similarity.
 
-## Pipeline Overview
+## How This Can Be Used in a Company
 
-```
-Raw data → Cleaning → Prompt Engineering → Base LLM
-                              ↓
-                    Fine-Tuning (QLoRA)
-                              ↓
-              Evaluation (BLEU / ROUGE-L / Cosine)
-                              ↓
-          (Optional) RAG: retrieval + context injection
-                              ↓
-              FastAPI API → Streamlit Application
-```
+This pipeline can be used to:
 
-## Notebooks
+- Generate product descriptions from catalog data automatically  
+- Maintain consistent tone (e.g., `marketing`, `technical`, `short`)  
+- Reduce manual writing time from hours to seconds  
+- Scale content creation for large or growing catalogs  
 
-| Notebook | Description |
-|----------|-------------|
-| `01_Load_&_Clean.ipynb` | Load Amazon Electronics dataset, filter, and deduplicate → `clean_products_800.csv` |
-| `02_Prompt_Engineering.ipynb` | Multi‑style prompt templates: `short` / `marketing` / `technical` |
-| `03_Evaluation.ipynb` | BLEU, ROUGE‑L, cosine similarity, composite score → `scores_evaluation.csv` |
-| `04_RAG.ipynb` | FAISS index, top‑k retrieval, context injection → `rag_results.jsonl` |
-| `05_LoRA.ipynb` | QLoRA fine‑tuning on Mistral‑7B Instruct (targets: q/k/v/o/gate/up/down proj) |
-| `06_API.ipynb` | FastAPI endpoints (`/generate`, `/health`) + ngrok public URL |
+Example:  
+An e‑commerce store can plug its product feed into this pipeline and automatically generate SEO‑friendly descriptions for thousands of SKUs.
 
-## Technologies
+## Business Impact
+
+- Cut time and cost of content creation  
+- Improve description quality and consistency  
+- Adapt tone to different audiences (B2B vs. B2C, technical vs. marketing)  
+- Build a reusable, reproducible pipeline for future catalogs  
+
+## Tech Stack
 
 - Python
 - Hugging Face Transformers
 - PEFT (QLoRA)
-- Mistral‑7B Instruct
+- Mistral‑7B
 - FAISS
-- sentence‑transformers
 - FastAPI
 - Streamlit
-- Pandas
-- NumPy
-
-## Business Impact
-
-This pipeline offers a scalable way to:
-- Scale content creation across large catalogs (hours → seconds).
-- Ensure consistent tone and quality via domain adaptation.
-- Control output style (`short` / `marketing` / `technical`).
-- Maintain a reproducible evaluation loop using BLEU, ROUGE‑L, and cosine similarity.
 
 ## Evaluation Plots
 
@@ -81,7 +70,9 @@ This pipeline offers a scalable way to:
 - ![RAG results](assets/RAG.png)
 - ![LoRA results](assets/Lora.png)
 
-## Streamlit Application
+## Demo Application
+
+Interactive Streamlit UI to test the model and compare outputs.
 
 ![Home page](assets/Home_page.png)  
 ![Example 1](assets/Example_1.png)
@@ -98,16 +89,6 @@ python3 -m streamlit run app/app.py
 
 > The Streamlit app calls a FastAPI backend via `API_URL` (configured for a ngrok URL in `app/app.py`).
 
-## Repository Structure
-
-```
-├── notebooks/   # 01 to 06 — full pipeline
-├── app/         # Streamlit UI
-├── data/        # processed dataset + evaluation outputs
-├── models/      # PEFT adapter + configs
-└── assets/      # screenshots and plots
-```
-
 ## How to Reproduce
 
 1. `01_Load_&_Clean.ipynb`
@@ -117,3 +98,14 @@ python3 -m streamlit run app/app.py
 5. `05_LoRA.ipynb` — save adapter to `models/final_adapter/`
 6. `06_API.ipynb` — start FastAPI, get backend URL
 7. Update `API_URL` in `app/app.py` and run Streamlit
+
+## Work With Me
+
+I help companies automate content generation with LLMs.
+
+I can help you:
+- Fine‑tune or adapt LLMs for your product catalog  
+- Build pipelines from metadata to product descriptions  
+- Integrate LLMs into your existing workflows (API, batch export)  
+
+Available for freelance projects.
