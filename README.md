@@ -2,19 +2,20 @@
 
 ## Business Problem
 
-E-commerce catalogs grow quickly, but high-quality product descriptions remain expensive and time-consuming to write manually.
+E‑commerce catalogs grow quickly, but high‑quality product descriptions remain expensive and time‑consuming to write manually.
 
-How can we automatically generate accurate, engaging, and scalable product descriptions using Large Language Models — and measure whether fine-tuning actually improves over prompt engineering alone?
+How can we automate the generation of accurate, engaging, and scalable product descriptions using Large Language Models — and answer a simple question:  
+does fine‑tuning actually improve over prompt engineering alone?
 
 ## Proposed Solution
 
-This repository builds a full end-to-end pipeline to generate product descriptions from structured product metadata (`title`, `brand`, `category`, `price`) and compare:
+This repository builds a full end‑to‑end pipeline to generate product descriptions from structured product metadata (`title`, `brand`, `category`, `price`) and compare:
 
 - a base LLM using prompt engineering,
-- a RAG-enhanced variant (FAISS retrieval + context injection),
-- a fine-tuned variant using QLoRA (PEFT) on Mistral 7B.
+- a RAG‑enhanced variant (FAISS retrieval + context injection),
+- a fine‑tuned variant using QLoRA (PEFT) on Mistral‑7B.
 
-The workflow is organized as 6 notebooks (data preparation → prompt generation → evaluation → RAG → fine-tuning → deployment) plus a Streamlit UI.
+The workflow is organized as 6 notebooks (data preparation → prompt generation → evaluation → RAG → fine‑tuning → deployment), plus a Streamlit UI for exploration.
 
 ## Results
 
@@ -24,9 +25,9 @@ The workflow is organized as 6 notebooks (data preparation → prompt generation
 | + RAG (FAISS retrieval) | ↑ +3.2% | retrieval context injection |
 | + LoRA fine-tuning (QLoRA) | ↑ +1.4% | domain adaptation |
 
-Best style: `technical` — composite score ~0.435 (BLEU + ROUGE-L + cosine similarity).
+Best style: **`technical`** — composite score ~0.435 (BLEU + ROUGE-L + cosine similarity).
 
-## Pipeline
+## Pipeline Overview
 
 ```
 Raw data → Cleaning → Prompt Engineering → Base LLM
@@ -40,40 +41,51 @@ Raw data → Cleaning → Prompt Engineering → Base LLM
               FastAPI API → Streamlit Application
 ```
 
-## Notebook Summary
+## Notebooks
 
 | Notebook | Description |
 |----------|-------------|
-| `01_Load_&_Clean.ipynb` | Load Amazon Electronics dataset, filter, deduplicate → `clean_products_800.csv` |
-| `02_Prompt_Engineering.ipynb` | Multi-style prompt templates: `short` / `marketing` / `technical` |
-| `03_Evaluation.ipynb` | BLEU, ROUGE-L, cosine similarity, composite score → `scores_evaluation.csv` |
-| `04_RAG.ipynb` | FAISS index, top-k retrieval, context injection → `rag_results.jsonl` |
-| `05_LoRA.ipynb` | QLoRA fine-tuning on Mistral 7B Instruct (targets: q/k/v/o/gate/up/down proj) |
+| `01_Load_&_Clean.ipynb` | Load Amazon Electronics dataset, filter, and deduplicate → `clean_products_800.csv` |
+| `02_Prompt_Engineering.ipynb` | Multi‑style prompt templates: `short` / `marketing` / `technical` |
+| `03_Evaluation.ipynb` | BLEU, ROUGE‑L, cosine similarity, composite score → `scores_evaluation.csv` |
+| `04_RAG.ipynb` | FAISS index, top‑k retrieval, context injection → `rag_results.jsonl` |
+| `05_LoRA.ipynb` | QLoRA fine‑tuning on Mistral‑7B Instruct (targets: q/k/v/o/gate/up/down proj) |
 | `06_API.ipynb` | FastAPI endpoints (`/generate`, `/health`) + ngrok public URL |
 
 ## Technologies
 
-Python · Hugging Face Transformers · PEFT (QLoRA) · Mistral 7B Instruct · FAISS · sentence-transformers · FastAPI · Streamlit · Pandas · NumPy
+- Python
+- Hugging Face Transformers
+- PEFT (QLoRA)
+- Mistral‑7B Instruct
+- FAISS
+- sentence‑transformers
+- FastAPI
+- Streamlit
+- Pandas
+- NumPy
 
 ## Business Impact
 
-- Scale content creation across large catalogs (hours → seconds)
-- Consistent tone and quality via domain adaptation
-- Controllable output style (short / marketing / technical)
-- Reproducible evaluation loop — BLEU, ROUGE-L, cosine similarity
+This pipeline offers a scalable way to:
+- Scale content creation across large catalogs (hours → seconds).
+- Ensure consistent tone and quality via domain adaptation.
+- Control output style (`short` / `marketing` / `technical`).
+- Maintain a reproducible evaluation loop using BLEU, ROUGE‑L, and cosine similarity.
 
 ## Evaluation Plots
 
-![Barplot comparison](assets/Eval.png)
-![Boxplot comparison](assets/Eval_2.png)
-![Composite score by style](assets/Composite.png)
-![RAG results](assets/RAG.png)
-![LoRA results](assets/Lora.png)
+- ![Barplot comparison](assets/Eval.png)
+- ![Boxplot comparison](assets/Eval_2.png)
+- ![Composite score by style](assets/Composite.png)
+- ![RAG results](assets/RAG.png)
+- ![LoRA results](assets/Lora.png)
 
 ## Streamlit Application
 
-![Home page](assets/Home_page.png)
+![Home page](assets/Home_page.png)  
 ![Example 1](assets/Example_1.png)
+
 <p align="left">
   <img src="assets/Example_3_video2.gif" width="600">
 </p>
